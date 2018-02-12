@@ -90,12 +90,30 @@ def parseDescriptionAsMap(description) {
 		map += [(nameAndValue[0].trim()):nameAndValue[1].trim()]
 	}
 }
-
+/*BigDecimal offset = settings.TempOffsetCh1
+            def startval = convertDegrees(tempScale,encapsulatedCommand) 
+            def thetemp = startval as BigDecimal
+            BigDecimal adjval = (thetemp + offset)
+            def dispval =  String.format("%5.1f", adjval)
+            def finalval = dispval as BigDecimal*/
 private calculateHumidity(value) {
-	//adc reading of 0x1ec0 produces a plant fuel level near 0
-	//adc reading of 0x2100 produces a plant fuel level near 100%
-	def range = 576 //8448 - 7872
-	def percent = (Integer.parseInt(value, 16) / range) * 100
+	//adc reading of 0x1ec0 produces a plant fuel level near 0 18a9 6313 kitchen bath ivy 1d11 kitchn tree
+	//adc reading of 0x2100 produces a plant fuel level near 100% 0=0
+    //log.debug "value dec = $value"
+	//def range = 576 //8448 - 7872
+    def intvalue = (Integer.parseInt(value, 16))
+    //log.debug "int value = $intvalue"
+     BigDecimal rng = 9120.00
+    def decvalue = intvalue as BigDecimal
+    log.debug "decimal value = $decvalue"
+    
+    BigDecimal newvalue = (decvalue / rng) * 100.00
+    log.debug "newvalue = $newvalue"
+    def dispval =  String.format("%5.1f", newvalue)
+    def finalval = dispval as BigDecimal
+   // def newvalue2 = ((9120.00 / (Integer.parseInt(value, 16))) * 100.00)
+    def percent = finalval
+	//def percent = (range / Integer.parseInt(value, 16)) * 100
 	percent = Math.max(0.0, Math.min(percent, 100.0))
 	percent
 }
